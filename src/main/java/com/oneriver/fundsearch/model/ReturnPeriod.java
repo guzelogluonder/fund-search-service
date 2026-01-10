@@ -24,7 +24,7 @@ public class ReturnPeriod {
     private Double returnValue;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fund_id",nullable = false)
+    @JoinColumn(name = "fund_id", nullable = false)
     @JsonIgnore
     private Fund fund;
 

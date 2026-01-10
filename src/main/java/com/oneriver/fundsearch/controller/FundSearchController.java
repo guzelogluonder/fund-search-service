@@ -36,7 +36,7 @@ public class FundSearchController {
                                                            @RequestParam(required = false) String sortBy,
                                                            @RequestParam(required = false, defaultValue = "asc") String sortOrder,
                                                            @RequestParam(defaultValue = "0") @Min(0) int page,
-                                                           @RequestParam(defaultValue = "10") @Min(1) @Max(100) int size){
+                                                           @RequestParam(defaultValue = "10") @Min(1) @Max(100) int size) {
         Page<FundSearchResponse> results = fundSearchService.searchFunds(
                 query, umbrellaFundType, returnPeriod,
                 minReturn, maxReturn, sortBy, sortOrder, page, size
@@ -50,7 +50,7 @@ public class FundSearchController {
                 "totalElements", results.getTotalElements(),
                 "pageSize", results.getSize(),
                 "hasNext", results.hasNext(),
-                "hasPrevious",results.hasPrevious(),
+                "hasPrevious", results.hasPrevious(),
                 "isFirst", results.isFirst(),
                 "isLast", results.isLast()
         ));
