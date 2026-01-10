@@ -2,7 +2,6 @@ package com.oneriver.fundsearch.controller;
 
 import com.oneriver.fundsearch.service.ExcelImportService;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,7 +19,7 @@ public class ImportController {
     private final ExcelImportService excelImportService;
 
     @PostMapping("/excel")
-    public ResponseEntity<Map<String,Object>> importExcel(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<Map<String, Object>> importExcel(@RequestParam("file") MultipartFile file) {
         excelImportService.importExcel(file);
         return ResponseEntity.ok().build();
     }
