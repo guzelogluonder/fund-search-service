@@ -20,7 +20,7 @@ public class ReturnPeriod {
     @Column(nullable = false)
     private String periodName;
 
-    @Column(nullable = false)
+    @Column
     private Double returnValue;
 
     @ManyToOne(fetch = FetchType.LAZY)
