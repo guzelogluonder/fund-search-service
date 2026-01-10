@@ -31,10 +31,4 @@ public class Fund {
     @OneToMany(mappedBy = "fund",cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ReturnPeriod> returnPeriods = new ArrayList<>();
 
-    public void addReturnPeriod(ReturnPeriod returnPeriod){
-        returnPeriods.add(returnPeriod);
-        returnPeriod.setFund(this);
-    }
-
-
 }
