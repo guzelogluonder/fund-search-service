@@ -4,8 +4,10 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+
 public interface ExceImportValidator {
 
-    void validate(MultipartFile file) throws InvalidFormatException, FileSizeLimitExceededException;
+    void validate(MultipartFile file) throws InvalidFormatException, IOException;
 
 }
