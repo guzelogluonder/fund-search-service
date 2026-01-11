@@ -22,7 +22,7 @@ public class ValidationService {
         excelImportValidators.forEach(validator -> {
             try {
                 validator.validate(file);
-            } catch (InvalidFormatException | FileSizeLimitExceededException e) {
+            } catch (FileSizeLimitExceededException e) {
                 throw new RuntimeException(e);
             }
         });

@@ -2,6 +2,7 @@ package com.oneriver.fundsearch.service;
 
 import com.oneriver.fundsearch.document.FundDocument;
 import com.oneriver.fundsearch.dto.FundRowData;
+import com.oneriver.fundsearch.exception.handler.InvalidateTypeException;
 import com.oneriver.fundsearch.model.Fund;
 import com.oneriver.fundsearch.model.ReturnPeriod;
 import com.oneriver.fundsearch.repository.FundElasticserchRepository;
@@ -115,8 +116,8 @@ public class ExcelImportService {
             } else {
                 return null;
             }
-        } catch (Exception e) {
-            return null;
+        } catch (InvalidateTypeException e) {
+            throw new InvalidateTypeException("Invalid cell type: " + cell.getCellType());
         }
     }
 
@@ -135,8 +136,8 @@ public class ExcelImportService {
                 return null;
             }
 
-        } catch (NumberFormatException e) {
-            throw new NumberFormatException("Invalid number format: " + cell.getStringCellValue());
+        } catch (InvalidateTypeException e) {
+            throw new InvalidateTypeException("Invalid number format: " + cell.getStringCellValue());
         }
     }
 }
