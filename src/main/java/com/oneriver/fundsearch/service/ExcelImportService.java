@@ -6,6 +6,7 @@ import com.oneriver.fundsearch.model.Fund;
 import com.oneriver.fundsearch.model.ReturnPeriod;
 import com.oneriver.fundsearch.repository.FundElasticserchRepository;
 import com.oneriver.fundsearch.repository.FundRepository;
+import com.oneriver.fundsearch.service.validator.ValidationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
@@ -24,9 +25,14 @@ public class ExcelImportService {
 
     private final FundRepository fundRepository;
     private final FundElasticserchRepository fundElasticserchRepository;
+    private final ValidationService validationService;
 
     @Transactional
     public void importExcel(MultipartFile file) {
+        log.debug("Importing excel file: {}", file.getOriginalFilename());
+
+        validationService.validate(file);
+
         try (Workbook workbook = new XSSFWorkbook(file.getInputStream())) {
             Sheet sheet = workbook.getSheetAt(0);
             List<FundRowData> fundRowDataList = new ArrayList<>();
