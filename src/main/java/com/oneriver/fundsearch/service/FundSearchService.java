@@ -93,9 +93,9 @@ public class FundSearchService {
             String field;
             if (sortBy.startsWith("returnPeriods.")) {
                 field = sortBy;
-            } else if ("fundCode".equals(sortBy) || "fundName".equals(sortBy)) {
-                field = sortBy + ".keyword";
-            } else {
+            } else if ("fundName".equals(sortBy)) {
+                throw new RuntimeException("Fund name cannot be sorted");//exception duzenle
+            } else{
                 field = sortBy;
             }
 
