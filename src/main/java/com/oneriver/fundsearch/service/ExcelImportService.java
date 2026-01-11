@@ -52,13 +52,13 @@ public class ExcelImportService {
 
     public FundRowData parseRow(Row row) {
         Map<String, Double> returnPeriods = new HashMap<>();
-        returnPeriods.put("1 Ay (%)", convertToDouble(row.getCell(3)));
-        returnPeriods.put("3 Ay (%)", convertToDouble(row.getCell(4)));
-        returnPeriods.put("6 Ay (%)", convertToDouble(row.getCell(5)));
-        returnPeriods.put("Yılbaşı (%)", convertToDouble(row.getCell(6)));
-        returnPeriods.put("1 Yıl (%)", convertToDouble(row.getCell(7)));
-        returnPeriods.put("3 Yıl (%)", convertToDouble(row.getCell(8)));
-        returnPeriods.put("5 Yıl (%)", convertToDouble(row.getCell(9)));
+        returnPeriods.put("1_AY", convertToDouble(row.getCell(3)));
+        returnPeriods.put("3_AY", convertToDouble(row.getCell(4)));
+        returnPeriods.put("6_AY", convertToDouble(row.getCell(5)));
+        returnPeriods.put("YILBASI", convertToDouble(row.getCell(6)));
+        returnPeriods.put("1_YIL", convertToDouble(row.getCell(7)));
+        returnPeriods.put("3_YIl", convertToDouble(row.getCell(8)));
+        returnPeriods.put("5_YIl", convertToDouble(row.getCell(9)));
         return FundRowData.builder()
                 .fundCode(convertToString(row.getCell(0)))
                 .fundName(convertToString(row.getCell(1)))
