@@ -6,7 +6,6 @@ import com.oneriver.fundsearch.service.FundSearchService;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -22,13 +21,13 @@ import java.util.Map;
 @RequestMapping("/api/v1/funds")
 @RequiredArgsConstructor
 @Validated
-@Slf4j
 public class FundSearchController {
 
     private final FundSearchService fundSearchService;
 
     @GetMapping("/search")
-    public ResponseEntity<Map<String, Object>> searchFunds(@RequestParam(required = false) String query,
+    public ResponseEntity<Map<String, Object>> searchFunds(@RequestParam(required = false) String fundCode,
+                                                           @RequestParam(required = false) String fundName,
                                                            @RequestParam(required = false) String umbrellaFundType,
                                                            @RequestParam(required = false) String returnPeriod,
                                                            @RequestParam(required = false) Double minReturn,
@@ -37,10 +36,8 @@ public class FundSearchController {
                                                            @RequestParam(required = false, defaultValue = "asc") String sortOrder,
                                                            @RequestParam(defaultValue = "0") @Min(0) int page,
                                                            @RequestParam(defaultValue = "10") @Min(1) @Max(100) int size) {
-        Page<FundSearchResponse> results = fundSearchService.searchFunds(
-                query, umbrellaFundType, returnPeriod,
-                minReturn, maxReturn, sortBy, sortOrder, page, size
-        );
+        Page<FundSearchResponse> results = fundSearchService.searchFunds(fundCode,fundName, umbrellaFundType, returnPeriod, minReturn,
+                maxReturn, sortBy, sortOrder, page, size);
 
         Map<String, Object> response = new HashMap<>();
         response.put("content", results.getContent());

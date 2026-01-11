@@ -26,46 +26,46 @@ public class FundSearchService {
 
     private final ElasticsearchOperations elasticsearchOperations;
 
-    public Page<FundSearchResponse> searchFunds(
-            String searchTerm,
-            String umbrellaFundType,
-            String returnPeriod,
-            Double minReturn,
-            Double maxReturn,
-            String sortBy,
-            String sortOrder,
-            int page,
-            int size
-    ) {
+    public Page<FundSearchResponse> searchFunds(String fundCode, String fundName, String umbrellaFundType, String returnPeriod,
+                                                Double minReturn, Double maxReturn, String sortBy, String sortOrder,
+                                                int page, int size) {
         //TODO ValidateSearch()
         try {
-            List<Query> queries = buildQueries(searchTerm, umbrellaFundType, returnPeriod, minReturn, maxReturn);
-            Query mainQuery = queries.isEmpty() ? matchAll() : boolMust(queries);
-            NativeQuery searchQuery = buildSearchQuery(mainQuery, sortBy, sortOrder, page, size);
+            List<Query> queries = buildQueries(fundCode, fundName, umbrellaFundType, returnPeriod, minReturn, maxReturn);
+            if (queries.isEmpty()) {
+                return new PageImpl<>(List.of());
+            } else {
+                Query mainQuery = boolMust(queries);
+                NativeQuery searchQuery = buildSearchQuery(mainQuery, sortBy, sortOrder, page, size);
 
-            SearchHits<FundDocument> hits = elasticsearchOperations.search(searchQuery, FundDocument.class);
-            List<FundSearchResponse> results = hits.stream().map(hit -> docToSearchResponse(hit.getContent())).toList();
+                SearchHits<FundDocument> hits = elasticsearchOperations.search(searchQuery, FundDocument.class);
+                List<FundSearchResponse> results = hits.stream().map(hit -> docToSearchResponse(hit.getContent())).toList();
 
-            return new PageImpl<>(results, PageRequest.of(page, size), hits.getTotalHits());
+                return new PageImpl<>(results, PageRequest.of(page, size), hits.getTotalHits());
+            }
         } catch (Exception e) {
             log.error("Error searching funds", e);
             throw new RuntimeException("Search failed: " + e.getMessage(), e);
         }
     }
 
-    private List<Query> buildQueries(String term, String type, String period, Double min, Double max) {
+    private List<Query> buildQueries(String fundCode, String fundName, String type, String period, Double min, Double max) {
 
         List<Query> queries = new ArrayList<>();
 
-        if (StringUtils.hasText(term)) {
-            queries.add(Query.of(q -> q.bool(b -> b
-                    .should(s -> s.wildcard(w -> w.field("fundName").value("*" + term + "*").caseInsensitive(true)))
-                    .should(s -> s.wildcard(w -> w.field("fundName").value("*" + term + "*").caseInsensitive(true)))
-                    .minimumShouldMatch("1"))));
+        if (StringUtils.hasText(fundCode)) {
+            Query fundCodeQuery = Query.of(query -> query.wildcard(doc -> doc.field("fundCode").value("*" + fundCode + "*").caseInsensitive(true)));
+            queries.add(fundCodeQuery);
+        }
+
+        if (StringUtils.hasText(fundName)) {
+            Query fundNameQuery = Query.of(query -> query.wildcard(doc -> doc.field("fundName").value("*" + fundName + "*").caseInsensitive(true)));
+            queries.add(fundNameQuery);
         }
 
         if (StringUtils.hasText(type)) {
-            queries.add(Query.of(q -> q.term(t -> t.field("umbrellaFundType").value(type))));
+            Query umbrellaFundTypeQuery = Query.of(query -> query.term(t -> t.field("umbrellaFundType").value(type)));
+            queries.add(umbrellaFundTypeQuery);
         }
 
 //        if (StringUtils.hasText(period) && (min != null || max != null)) {
@@ -90,8 +90,14 @@ public class FundSearchService {
 
         if (StringUtils.hasText(sortBy)) {
             SortOrder order = "desc".equalsIgnoreCase(sortOrder) ? SortOrder.Desc : SortOrder.Asc;
-            String field = sortBy.startsWith("returnPeriods.") ? sortBy :
-                    ("fundCode".equals(sortBy) || "fundName".equals(sortBy)) ? sortBy + ".keyword" : sortBy;
+            String field;
+            if (sortBy.startsWith("returnPeriods.")) {
+                field = sortBy;
+            } else if ("fundCode".equals(sortBy) || "fundName".equals(sortBy)) {
+                field = sortBy + ".keyword";
+            } else {
+                field = sortBy;
+            }
 
             builder.withSort(s -> s.field(f -> {
                 var fb = f.field(field).order(order);
@@ -103,15 +109,14 @@ public class FundSearchService {
         return builder.build();
     }
 
-    private Query matchAll() {
-        return Query.of(q -> q.matchAll(m -> m));
-    }
-
     private Query boolMust(List<Query> queries) {
-        return Query.of(q -> q.bool(b -> {
-            queries.forEach(b::must);
-            return b;
-        }));
+        return Query.of(queryBuilder -> queryBuilder.bool(boolBuilder ->{
+                    for (Query query : queries) {
+                        boolBuilder.must(query);
+                    }
+                    return boolBuilder;
+                })
+        );
     }
 
     private FundSearchResponse docToSearchResponse(FundDocument doc) {
