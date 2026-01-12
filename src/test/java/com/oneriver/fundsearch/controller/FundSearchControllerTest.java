@@ -5,8 +5,6 @@ import org.junit.jupiter.api.Test;
 
 import java.io.InputStream;
 
-import static org.mockito.Mockito.when;
-
 class FundSearchControllerTest {
 
     private InputStream excelFile;

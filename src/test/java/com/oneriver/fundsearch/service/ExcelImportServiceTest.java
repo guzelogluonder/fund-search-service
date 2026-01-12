@@ -1,8 +1,6 @@
 package com.oneriver.fundsearch.service;
 
-import com.oneriver.fundsearch.document.FundDocument;
 import com.oneriver.fundsearch.dto.ExcelImportResponse;
-import com.oneriver.fundsearch.model.Fund;
 import com.oneriver.fundsearch.repository.FundElasticserchRepository;
 import com.oneriver.fundsearch.repository.FundRepository;
 import com.oneriver.fundsearch.service.validator.ValidationService;
@@ -13,20 +11,16 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(org.mockito.junit.jupiter.MockitoExtension.class)
 class ExcelImportServiceTest {
@@ -64,6 +58,7 @@ class ExcelImportServiceTest {
     void saveFund() {
         //TODO
     }
+
     private byte[] createExcelBytes() throws Exception {
         try (Workbook wb = new XSSFWorkbook()) {
             Sheet sheet = wb.createSheet("Sheet1");

@@ -33,7 +33,7 @@ public class FundSearchController {
                                                            @RequestParam(required = false, defaultValue = "asc") String sortOrder,
                                                            @RequestParam(defaultValue = "0") @Min(0) int page,
                                                            @RequestParam(defaultValue = "10") @Min(1) @Max(100) int size) {
-        Page<FundSearchResponse> results = fundSearchService.searchFunds(fundCode,fundName, umbrellaFundType,sortBy, sortOrder, page, size);
+        Page<FundSearchResponse> results = fundSearchService.searchFunds(fundCode, fundName, umbrellaFundType, sortBy, sortOrder, page, size);
 
         Map<String, Object> response = new HashMap<>();
         response.put("content", results.getContent());

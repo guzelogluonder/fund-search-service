@@ -12,6 +12,6 @@ public class FundRowData {
     private String fundCode;
     private String fundName;
     private String umbrellaFundType;
-    private Map<String,Double> returnPeriods;
+    private Map<String, Double> returnPeriods;
 
 }

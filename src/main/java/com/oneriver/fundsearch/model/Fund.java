@@ -28,7 +28,7 @@ public class Fund {
     @Column(nullable = false)
     private String umbrellaFundType;
 
-    @OneToMany(mappedBy = "fund",cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "fund", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ReturnPeriod> returnPeriods = new ArrayList<>();
 
 }
