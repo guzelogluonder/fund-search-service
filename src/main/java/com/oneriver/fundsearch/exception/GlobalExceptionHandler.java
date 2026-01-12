@@ -1,11 +1,8 @@
 package com.oneriver.fundsearch.exception;
 
-import org.springframework.data.util.TypeCollector;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ProblemDetail;
+
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -22,9 +19,10 @@ public class GlobalExceptionHandler {
                 LocalDateTime.now()
         );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
+    }
+
+    public record ErrorResponse(int status, String message, LocalDateTime timestamp) {
+
+
+    }
 }
-
-public record ErrorResponse(int status, String message, LocalDateTime timestamp) {
-
-
-}}

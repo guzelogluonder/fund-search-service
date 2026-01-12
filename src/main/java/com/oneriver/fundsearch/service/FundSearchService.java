@@ -26,12 +26,10 @@ public class FundSearchService {
 
     private final ElasticsearchOperations elasticsearchOperations;
 
-    public Page<FundSearchResponse> searchFunds(String fundCode, String fundName, String umbrellaFundType, String returnPeriod,
-                                                Double minReturn, Double maxReturn, String sortBy, String sortOrder,
+    public Page<FundSearchResponse> searchFunds(String fundCode, String fundName, String umbrellaFundType,String sortBy, String sortOrder,
                                                 int page, int size) {
-        //TODO ValidateSearch()
         try {
-            List<Query> queries = buildQueries(fundCode, fundName, umbrellaFundType, returnPeriod, minReturn, maxReturn);
+            List<Query> queries = buildQueries(fundCode, fundName, umbrellaFundType);
             if (queries.isEmpty()) {
                 return new PageImpl<>(List.of());
             } else {
@@ -49,7 +47,7 @@ public class FundSearchService {
         }
     }
 
-    private List<Query> buildQueries(String fundCode, String fundName, String type, String period, Double min, Double max) {
+    private List<Query> buildQueries(String fundCode, String fundName, String type) {
 
         List<Query> queries = new ArrayList<>();
 
@@ -67,20 +65,6 @@ public class FundSearchService {
             Query umbrellaFundTypeQuery = Query.of(query -> query.term(t -> t.field("umbrellaFundType").value(type)));
             queries.add(umbrellaFundTypeQuery);
         }
-
-//        if (StringUtils.hasText(period) && (min != null || max != null)) {
-//            String field = "returnPeriods." + period;
-//            queries.add(Query.of(q -> q.range(builder -> {
-//                builder.field(field);
-//                if (min != null) {
-//                    builder.gte(JsonData.of(min));
-//                }
-//                if (max != null) {
-//                    builder.lte(JsonData.of(max));
-//                }
-//                return builder;
-//            })));
-//        }
 
         return queries;
     }
