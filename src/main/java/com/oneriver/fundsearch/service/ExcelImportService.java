@@ -3,6 +3,7 @@ package com.oneriver.fundsearch.service;
 import com.oneriver.fundsearch.document.FundDocument;
 import com.oneriver.fundsearch.dto.ExcelImportResponse;
 import com.oneriver.fundsearch.dto.FundRowData;
+import com.oneriver.fundsearch.exception.ExcelImportException;
 import com.oneriver.fundsearch.model.Fund;
 import com.oneriver.fundsearch.model.ReturnPeriod;
 import com.oneriver.fundsearch.repository.FundElasticserchRepository;
@@ -17,7 +18,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -45,11 +49,11 @@ public class ExcelImportService {
                     fundRowDataList.add(parseRow(row));
                 }
             }
-         return ExcelImportResponse.builder()
-                 .message( saveFund(fundRowDataList).size() + " row insert edildi.")
-                 .build();
+            return ExcelImportResponse.builder()
+                    .message(saveFund(fundRowDataList).size() + " row insert edildi.")
+                    .build();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new ExcelImportException("While importing the excel error occured");
         }
     }
 

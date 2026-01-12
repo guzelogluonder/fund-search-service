@@ -29,5 +29,5 @@ public class FundDocument {
     private String umbrellaFundType;
 
     @Field(type = FieldType.Object)  // Nested Object
-    private Map<String,Double> returnPeriods;
+    private Map<String, Double> returnPeriods;
 }

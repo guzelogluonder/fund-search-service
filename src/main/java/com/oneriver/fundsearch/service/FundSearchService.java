@@ -26,15 +26,15 @@ public class FundSearchService {
 
     private final ElasticsearchOperations elasticsearchOperations;
 
-    public Page<FundSearchResponse> searchFunds(String fundCode, String fundName, String umbrellaFundType,String sortBy, String sortOrder,
+    public Page<FundSearchResponse> searchFunds(String fundCode, String fundName, String umbrellaFundType, String sortBy, String sortOrder,
                                                 int page, int size) {
         try {
-            List<Query> queries = buildQueries(fundCode, fundName, umbrellaFundType);
+            List<Query> queries = createElasticSearchClauses(fundCode, fundName, umbrellaFundType);
             if (queries.isEmpty()) {
                 return new PageImpl<>(List.of());
             } else {
-                Query mainQuery = boolMust(queries);
-                NativeQuery searchQuery = buildSearchQuery(mainQuery, sortBy, sortOrder, page, size);
+                Query mainQuery = buildMustClause(queries);
+                NativeQuery searchQuery = createElasticSearchQueryWithSorting(mainQuery, sortBy, sortOrder, page, size);
 
                 SearchHits<FundDocument> hits = elasticsearchOperations.search(searchQuery, FundDocument.class);
                 List<FundSearchResponse> results = hits.stream().map(hit -> docToSearchResponse(hit.getContent())).toList();
@@ -47,7 +47,7 @@ public class FundSearchService {
         }
     }
 
-    private List<Query> buildQueries(String fundCode, String fundName, String type) {
+    private List<Query> createElasticSearchClauses(String fundCode, String fundName, String type) {
 
         List<Query> queries = new ArrayList<>();
 
@@ -69,7 +69,7 @@ public class FundSearchService {
         return queries;
     }
 
-    private NativeQuery buildSearchQuery(Query query, String sortBy, String sortOrder, int page, int size) {
+    private NativeQuery createElasticSearchQueryWithSorting(Query query, String sortBy, String sortOrder, int page, int size) {
         var builder = NativeQuery.builder().withQuery(query).withPageable(PageRequest.of(page, size));
 
         if (StringUtils.hasText(sortBy)) {
@@ -79,7 +79,7 @@ public class FundSearchService {
                 field = sortBy;
             } else if ("fundName".equals(sortBy)) {
                 throw new RuntimeException("Fund name cannot be sorted");//exception duzenle
-            } else{
+            } else {
                 field = sortBy;
             }
 
@@ -93,8 +93,8 @@ public class FundSearchService {
         return builder.build();
     }
 
-    private Query boolMust(List<Query> queries) {
-        return Query.of(queryBuilder -> queryBuilder.bool(boolBuilder ->{
+    private Query buildMustClause(List<Query> queries) {
+        return Query.of(queryBuilder -> queryBuilder.bool(boolBuilder -> {
                     for (Query query : queries) {
                         boolBuilder.must(query);
                     }
