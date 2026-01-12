@@ -5,6 +5,7 @@ import com.oneriver.fundsearch.dto.FundSearchResponse;
 import com.oneriver.fundsearch.service.FundSearchService;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
