@@ -29,15 +29,11 @@ public class FundSearchController {
     public ResponseEntity<Map<String, Object>> searchFunds(@RequestParam(required = false) String fundCode,
                                                            @RequestParam(required = false) String fundName,
                                                            @RequestParam(required = false) String umbrellaFundType,
-                                                           @RequestParam(required = false) String returnPeriod,
-                                                           @RequestParam(required = false) Double minReturn,
-                                                           @RequestParam(required = false) Double maxReturn,
                                                            @RequestParam(required = false) String sortBy,
                                                            @RequestParam(required = false, defaultValue = "asc") String sortOrder,
                                                            @RequestParam(defaultValue = "0") @Min(0) int page,
                                                            @RequestParam(defaultValue = "10") @Min(1) @Max(100) int size) {
-        Page<FundSearchResponse> results = fundSearchService.searchFunds(fundCode,fundName, umbrellaFundType, returnPeriod, minReturn,
-                maxReturn, sortBy, sortOrder, page, size);
+        Page<FundSearchResponse> results = fundSearchService.searchFunds(fundCode,fundName, umbrellaFundType,sortBy, sortOrder, page, size);
 
         Map<String, Object> response = new HashMap<>();
         response.put("content", results.getContent());

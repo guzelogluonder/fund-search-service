@@ -1,6 +1,7 @@
 package com.oneriver.fundsearch.service;
 
 import com.oneriver.fundsearch.document.FundDocument;
+import com.oneriver.fundsearch.dto.ExcelImportResponse;
 import com.oneriver.fundsearch.dto.FundRowData;
 import com.oneriver.fundsearch.model.Fund;
 import com.oneriver.fundsearch.model.ReturnPeriod;
@@ -28,7 +29,7 @@ public class ExcelImportService {
     private final ValidationService validationService;
 
     @Transactional
-    public void importExcel(MultipartFile file) {
+    public ExcelImportResponse importExcel(MultipartFile file) {
         log.debug("Importing excel file: {}", file.getOriginalFilename());
 
         validationService.validate(file);
@@ -44,7 +45,9 @@ public class ExcelImportService {
                     fundRowDataList.add(parseRow(row));
                 }
             }
-            saveFund(fundRowDataList);
+         return ExcelImportResponse.builder()
+                 .message( saveFund(fundRowDataList).size() + " row insert edildi.")
+                 .build();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -67,7 +70,7 @@ public class ExcelImportService {
                 .build();
     }
 
-    public void saveFund(List<FundRowData> dataList) {
+    public List<Fund> saveFund(List<FundRowData> dataList) {
         List<Fund> listFundEntities = new ArrayList<>();
         for (FundRowData data : dataList) {
             Fund fund = new Fund();
@@ -99,7 +102,7 @@ public class ExcelImportService {
             fundDocuments.add(doc);
         }
         fundElasticserchRepository.saveAll(fundDocuments);
-
+        return savedFund;
     }
 
     private String convertToString(Cell cell) {
